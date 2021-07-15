@@ -1,0 +1,82 @@
+---
+title: "O valor da causa na perspectiva jurimétrica"
+description: |
+  A short description of the post.
+author:
+  - name: José de Jesus Filho
+    url: https://www.linkedin.com/in/jjesusfilho/
+date: 07-13-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Uma exigência para ingressar com uma ação cível é informar o valor da causa na petição inicial, ainda que o pedido não tenha qualquer valor econômico. Isso é o que preconiza o Código de Processo Civil, em seus artigos 291 e 319. Ou seja, mesmo que você ajuíze uma ação de obrigação de não fazer ou um Habeas Data, para o qual não se exige o pagamento de custas ou taxas judiciais, o valor da causa deve constar da petição, sob pena de indeferimento.
+
+Neste texto, iremos abordar os aspectos jurimétricos do valor da causa. Não pretendemos esgotar o assunto. Isso seria impossível. Queremos apenas explorar a distribuição do valor da causa e sugerir como ele pode ser usado em análises jurimétricas. 
+
+Optamos por uma assunto cujo valor da causa é certo, qual seja, o valor nos pedidos de indenização por danos morais. Esse assunto tem a vantagem de que o valor da causa corresponde ao que realmente pleiteia o autor do pedido, e não um valor para efeito de custas judiciais ou por mera exigência legal. Por outro lado, ele não necessariamente corresponde ao valor arbitrado pela juíza na hipótese de procedência da ação. 
+
+Nesse sentido, teremos oportunidade de explorar o hiato entre esses dois valores e, mais, verificaremos qual a correlação entre eles. Você pode se perguntar, mais e se não houver correlação alguma? Desde já, informo que correlação sempre existe, ela pode estar mais próxima de zero ou de um, negativo ou positivo. Dificilmente será zero ou um.
+
+Ainda que a correlação entre o valor da causa e o valor arbitrado seja mínima, isso não significa que o valor da causa não possa ser usado. De pronto, podemos vislumbrar algumas situações em que o valor da causa operaria como proxy de variáveis não observadas. Por exemplo, o valor da causa pode indicar como o autor da ação vivenciou a suposta ofensa que teria sofrido. Além disso, ele pode dizer algo sobre o réu. Uma ação contra uma microempresa possivelmente terá um valor menor do que uma ação contra uma empresa de grande porte.
+
+
+## Baixando os dados
+
+Uma vez que iremos explorar o valor da causa em ações de indenização por danos morais, vamos baixar esses dados do banco de julgados de primeira instância do Tribunal de Justiça de São Paulo. Para tanto, iremos usar a linguagem de programação R e uma ferramenta disponibilizada gratuitamente, o pacote [tjsp](https://tjsp.consudata.com.br), elaborado por mim e pelo Julio Trecenti. Um pacote nada mais é que um conjunto de funções ou comandos voltados a tarefas similares. Se você tem familiaridade com o R, basta reproduzir os comandos. Se não, acompanhe a leitura sem se preocupar em reproduzir a análise.
+
+Inicie por instalar o pacote tjsp:
+
+```r
+remotes::install_github("jjesusfilho/tjsp")
+```
+Uma vez instalado, criamos um diretório onde baixaremos os dados da busca de julgados. Para essa análise, baixamos os julgados entre 01 de janeiro de 2021 e 13 de julho de 2021 com o assunto indenização por danos morais.
+
+```r
+dir.create("cjpg")
+
+assunto <- "7779,6226,7781"
+
+tjsp::baixar_cjpg(assunto = assunto,
+                  inicio = "01/01/2021",
+                  fim = "13/07/2021",
+                  diretorio = "cjpg"
+                  )
+
+```
+
+Depois disso, temos de converter esses dados que estão em html para uma tabela, ou dataframe.
+
+```
+cjpg <- tjsp::ler_cjsg(diretorio = "cjpg")
+```
+
+Para encontrar o valor da causa, temos de tomar mais um passo, baixar a consulta processual:
+
+```r
+dir.create("cpopg")
+tjsp::baixar_cpopg(cjsg$processo, diretorio = "cpopg")
+```
+Feito isso, procedemos à leitura das informações processuais contidas nos htmls.
+
+```r
+cpopg <- tjsp::tjsp_ler_dados(diretorio = "cpopg)
+```
+
+Nesses mesmos htmls encontram-se as informações sobre as partes e a movimentação processual. Não utilizaremos os dados sobre as partes nessa análise.
+
+
+
+
+
+
+
+
+
+
